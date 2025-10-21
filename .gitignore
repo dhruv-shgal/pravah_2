@@ -1,0 +1,26 @@
+venv/
+.env/
+pravah/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+flask_app/data
+
+# Ignore build artifacts
+build/
+dist/
+*.egg-info/
+
+# Ignore VS Code and IDE settings
+.vscode/
+.idea/
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+*.pt
+*.npy
+uploads/
+face_embeddings/

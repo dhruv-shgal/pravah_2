@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PRAVAH - Login | AI Meets Conservation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-green: #2d5a3d;
+            --light-green: #4a7c59;
+            --mint-green: #7fb069;
+            --bg-white: #ffffff;
+            --text-dark: #2c3e50;
+            --text-light: #7f8c8d;
+            --subtle-bg: #f8fffe;
+            --border-light: #e8f5e8;
+            --success-green: #27ae60;
+            --error-red: #e74c3c;
+            --warning-orange: #f39c12;
+        }
+
+        [data-theme="dark"] {
+            --primary-green: #7fb069;
+            --light-green: #9bc53d;
+            --mint-green: #c7d2cc;
+            --bg-white: #0b1f16;
+            --text-dark: #e8f5e8;
+            --text-light: #a8b8a8;
+            --subtle-bg: #0e2c1d;
+            --border-light: #1a3d2e;
+            --success-green: #2ecc71;
+            --error-red: #e67e22;
+            --warning-orange: #f1c40f;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(120deg, #e9f5ec, #cde7d6);
+            color: var(--text-dark);
+            min-height: 100vh;
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] body {
+            background: linear-gradient(120deg, #0b1f16, #0e2c1d);
+        }
+
+        .container {
+            max-width: 450px;
+            margin: 3rem auto;
+            padding: 2rem;
+            background: var(--bg-white);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(45, 90, 61, 0.1);
+            border: 1px solid var(--border-light);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-green);
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border-light);
+            border-radius: 8px;
+            font-size: 1rem;
+            background: var(--bg-white);
+            color: var(--text-dark);
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 3px rgba(45, 90, 61, 0.1);
+        }
+
+        .camera-section {
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: var(--subtle-bg);
+            border-radius: 12px;
+            border: 2px dashed var(--border-light);
+            text-align: center;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0.25rem;
+        }
+
+        .btn-primary {
+            background: var(--primary-green);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--light-green);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--subtle-bg);
+            color: var(--text-dark);
+            border: 2px solid var(--border-light);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border-light);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .video-container {
+            position: relative;
+            margin: 1rem 0;
+            border-radius: 12px;
+            overflow: hidden;
+            display: none;
+        }
+
+        #video {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+
+        .capture-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(45, 90, 61, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            display: none;
+        }
+
+        .status-message {
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            font-weight: 500;
+            text-align: center;
+            display: none;
+        }
+
+        .status-success {
+            background: rgba(39, 174, 96, 0.1);
+            color: var(--success-green);
+            border: 1px solid var(--success-green);
+        }
+
+        .status-error {
+            background: rgba(231, 76, 60, 0.1);
+            color: var(--error-red);
+            border: 1px solid var(--error-red);
+        }
+
+        .status-info {
+            background: rgba(243, 156, 18, 0.1);
+            color: var(--warning-orange);
+            border: 1px solid var(--warning-orange);
+        }
+
+        .dark-mode-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--primary-green);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .dark-mode-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .signup-link {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .signup-link a {
+            color: var(--primary-green);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .signup-link a:hover {
+            text-decoration: underline;
+        }
+
+        .face-verification {
+            display: none;
+        }
+
+        .face-verification.active {
+            display: block;
+        }
+
+        .captured-face {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--success-green);
+            margin: 1rem auto;
+            display: none;
+        }
+
+        #canvas {
+            display: none;
+        }
+
+        .login-options {
+            margin: 1rem 0;
+            text-align: center;
+        }
+
+        .option-divider {
+            margin: 1rem 0;
+            text-align: center;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="dark-mode-toggle" onclick="toggleDarkMode()">🌙</button>
+
+    <div class="container">
+        <div class="header">
+            <div class="logo">🌱 PRAVAH</div>
+            <div class="subtitle">AI Meets Conservation - Welcome Back</div>
+        </div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label class="form-label" for="identifier">User ID or Email</label>
+                <input type="text" id="identifier" class="form-input" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="password">Password</label>
+                <input type="password" id="password" class="form-input" required>
+            </div>
+
+            <div class="login-options">
+                <button type="submit" class="btn btn-primary" style="width: 100%;" id="loginBtn">
+                    🔐 Login with Password
+                </button>
+                
+                <div class="option-divider">or</div>
+                
+                <button type="button" class="btn btn-secondary" style="width: 100%;" id="faceLoginBtn">
+                    📷 Login with Face Verification
+                </button>
+            </div>
+
+            <div class="face-verification" id="faceVerification">
+                <div class="camera-section">
+                    <h3 style="margin-bottom: 1rem; color: var(--text-dark);">Face Verification</h3>
+                    <p style="color: var(--text-light); margin-bottom: 1rem;">Look at the camera for secure login</p>
+                    
+                    <div class="video-container" id="videoContainer">
+                        <video id="video" autoplay muted></video>
+                        <div class="capture-overlay" id="captureOverlay">
+                            <div>📸 Verifying...</div>
+                        </div>
+                    </div>
+
+                    <canvas id="canvas" width="640" height="480"></canvas>
+                    <img id="capturedFace" class="captured-face" alt="Captured face">
+
+                    <div style="margin-top: 1rem;">
+                        <button type="button" class="btn btn-primary" id="captureBtn" disabled>
+                            📸 Capture & Verify
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="cancelFaceBtn">
+                            ❌ Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="status-message" id="statusMessage"></div>
+        </form>
+
+        <div class="signup-link">
+            Don't have an account? <a href="signup.html">Sign up here</a>
+        </div>
+    </div>
+
+    <script>
+        let stream = null;
+        let faceVerificationMode = false;
+
+        // Dark mode functionality
+        function toggleDarkMode() {
+            const body = document.body;
+            const isDark = body.getAttribute('data-theme') === 'dark';
+            body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            localStorage.setItem('theme', isDark ? 'light' : 'dark');
+            
+            const toggle = document.querySelector('.dark-mode-toggle');
+            toggle.textContent = isDark ? '🌙' : '☀️';
+        }
+
+        // Load saved theme
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.body.setAttribute('data-theme', savedTheme);
+            const toggle = document.querySelector('.dark-mode-toggle');
+            toggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+        }
+
+        // Show status message
+        function showStatus(message, type) {
+            const statusEl = document.getElementById('statusMessage');
+            statusEl.textContent = message;
+            statusEl.className = `status-message status-${type}`;
+            statusEl.style.display = 'block';
+        }
+
+        // Initialize camera for face verification
+        async function initFaceVerification() {
+            try {
+                showStatus('Accessing camera...', 'info');
+                
+                stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { width: 640, height: 480 } 
+                });
+                
+                const video = document.getElementById('video');
+                video.srcObject = stream;
+                
+                document.getElementById('videoContainer').style.display = 'block';
+                document.getElementById('captureBtn').disabled = false;
+                
+                showStatus('Camera ready! Position your face and click capture', 'success');
+            } catch (error) {
+                showStatus('Camera access denied. Please allow camera permissions.', 'error');
+                console.error('Camera error:', error);
+            }
+        }
+
+        // Capture face image
+        function captureFace() {
+            const video = document.getElementById('video');
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+
+            // Show capture overlay
+            const overlay = document.getElementById('captureOverlay');
+            overlay.style.display = 'flex';
+
+            // Draw video frame to canvas
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            // Convert to blob and show preview
+            canvas.toBlob((blob) => {
+                const capturedFace = document.getElementById('capturedFace');
+                capturedFace.src = URL.createObjectURL(blob);
+                capturedFace.style.display = 'block';
+                
+                // Hide video and show captured image
+                document.getElementById('videoContainer').style.display = 'none';
+                overlay.style.display = 'none';
+                
+                // Stop camera
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                }
+                
+                // Proceed with face login
+                performFaceLogin(blob);
+            }, 'image/jpeg', 0.8);
+        }
+
+        // Perform face login
+        async function performFaceLogin(faceBlob) {
+            const identifier = document.getElementById('identifier').value;
+            const password = document.getElementById('password').value;
+
+            if (!identifier || !password) {
+                showStatus('Please enter your credentials first', 'error');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('identifier', identifier);
+            formData.append('password', password);
+            formData.append('face_image', faceBlob, 'face.jpg');
+
+            try {
+                showStatus('Verifying face...', 'info');
+
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    const similarity = result.similarity || 1.0;
+                    showStatus(`✅ Login successful! Face match: ${(similarity * 100).toFixed(1)}%`, 'success');
+                    
+                    // Store user data
+                    const userData = {
+                        user_id: identifier,
+                        username: result.username || identifier,
+                        email: result.email || '',
+                        ecoCoins: result.ecoCoins || 0,
+                        uploads: result.uploads || [],
+                        loginDate: new Date().toISOString()
+                    };
+                    localStorage.setItem('pravah_user', JSON.stringify(userData));
+                    
+                    // Redirect to profile
+                    setTimeout(() => {
+                        window.location.href = 'profile.html';
+                    }, 2000);
+                } else {
+                    showStatus(`❌ Login failed: ${result.message}`, 'error');
+                }
+            } catch (error) {
+                showStatus('❌ Network error. Please try again.', 'error');
+                console.error('Login error:', error);
+            }
+        }
+
+        // Handle regular login (password only)
+        async function handlePasswordLogin(event) {
+            event.preventDefault();
+
+            if (faceVerificationMode) return; // Skip if in face mode
+
+            const identifier = document.getElementById('identifier').value;
+            const password = document.getElementById('password').value;
+
+            const formData = new FormData();
+            formData.append('identifier', identifier);
+            formData.append('password', password);
+
+            try {
+                showStatus('Logging in...', 'info');
+                document.getElementById('loginBtn').disabled = true;
+
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showStatus('✅ Login successful! Redirecting...', 'success');
+                    
+                    // Store user data
+                    const userData = {
+                        user_id: identifier,
+                        username: result.username || identifier,
+                        email: result.email || '',
+                        ecoCoins: result.ecoCoins || 0,
+                        uploads: result.uploads || [],
+                        loginDate: new Date().toISOString()
+                    };
+                    localStorage.setItem('pravah_user', JSON.stringify(userData));
+                    
+                    // Redirect to profile
+                    setTimeout(() => {
+                        window.location.href = 'profile.html';
+                    }, 2000);
+                } else {
+                    showStatus(`❌ Login failed: ${result.message}`, 'error');
+                    document.getElementById('loginBtn').disabled = false;
+                }
+            } catch (error) {
+                showStatus('❌ Network error. Please try again.', 'error');
+                document.getElementById('loginBtn').disabled = false;
+                console.error('Login error:', error);
+            }
+        }
+
+        // Toggle face verification mode
+        function toggleFaceVerification() {
+            faceVerificationMode = !faceVerificationMode;
+            const faceSection = document.getElementById('faceVerification');
+            
+            if (faceVerificationMode) {
+                faceSection.classList.add('active');
+                document.getElementById('faceLoginBtn').textContent = '❌ Cancel Face Login';
+                initFaceVerification();
+            } else {
+                faceSection.classList.remove('active');
+                document.getElementById('faceLoginBtn').textContent = '📷 Login with Face Verification';
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                }
+            }
+        }
+
+        // Event listeners
+        document.getElementById('loginForm').addEventListener('submit', handlePasswordLogin);
+        document.getElementById('faceLoginBtn').addEventListener('click', toggleFaceVerification);
+        document.getElementById('captureBtn').addEventListener('click', captureFace);
+        document.getElementById('cancelFaceBtn').addEventListener('click', toggleFaceVerification);
+
+        // Initialize
+        loadTheme();
+
+        // Check if already logged in
+        const existingUser = localStorage.getItem('pravah_user');
+        if (existingUser) {
+            const userData = JSON.parse(existingUser);
+            showStatus(`Welcome back, ${userData.username}! Redirecting to profile...`, 'success');
+            setTimeout(() => {
+                window.location.href = 'profile.html';
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
