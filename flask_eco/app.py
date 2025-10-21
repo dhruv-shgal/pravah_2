@@ -72,18 +72,41 @@ def verify_task():
         
         print(f"DEBUG: Verifying {task_type} task with image: {task_image.filename}")
         
-        # Prepare data for FastAPI (without user_id)
-        files = {'task_image': (task_image.filename, task_image.read(), task_image.content_type)}
-        data = {
-            'task_type': task_type,
-            'user_id': 'anonymous_user'  # Use anonymous user for verification
+        # Determine which API to call based on task type
+        api_endpoints = {
+            'plantation': 'http://localhost:8001/verify-plantation',
+            'waste_management': 'http://localhost:8002/verify-waste',
+            'stray_animal_feeding': 'http://localhost:8003/verify-animal-feeding'
         }
         
-        # Send to FastAPI backend using the original verify-task endpoint
-        response = requests.post(f"{FASTAPI_URL}/api/verify-task", 
-                               files=files, 
-                               data=data, 
-                               timeout=60)
+        if task_type not in api_endpoints:
+            print(f"DEBUG: Invalid task type: {task_type}")
+            return jsonify({
+                'success': False,
+                'message': f'Invalid task type: {task_type}'
+            })
+        
+        # Prepare data for specific API (only task_image)
+        files = {'task_image': (task_image.filename, task_image.read(), task_image.content_type)}
+        
+        # Send request to appropriate FastAPI service
+        api_url = api_endpoints[task_type]
+        print(f"DEBUG: Calling API: {api_url}")
+        
+        try:
+            response = requests.post(api_url, files=files, timeout=60)
+        except requests.exceptions.ConnectionError as e:
+            print(f"DEBUG: Connection error to {api_url}: {e}")
+            return jsonify({
+                'success': False,
+                'message': f'Cannot connect to {task_type} verification service. Please ensure the API is running.'
+            })
+        except requests.exceptions.Timeout as e:
+            print(f"DEBUG: Timeout error to {api_url}: {e}")
+            return jsonify({
+                'success': False,
+                'message': 'Verification timeout. Please try again.'
+            })
         
         print(f"DEBUG: FastAPI response status: {response.status_code}")
         print(f"DEBUG: FastAPI response: {response.text}")
@@ -152,29 +175,38 @@ def verify_task():
 def test_models():
     """Test if all AI models are working"""
     try:
-        # Test FastAPI health
-        response = requests.get(f"{FASTAPI_URL}/health", timeout=10)
+        # Test all three APIs
+        api_endpoints = {
+            'plantation': 'http://localhost:8001/',
+            'waste_management': 'http://localhost:8002/',
+            'stray_animal_feeding': 'http://localhost:8003/'
+        }
         
-        if response.status_code == 200:
-            health_data = response.json()
-            return jsonify({
-                'success': True,
-                'backend_status': health_data.get('status', 'unknown'),
-                'models_loaded': health_data.get('models_loaded', False),
-                'gpu_available': health_data.get('gpu_available', False),
-                'message': 'AI models are ready for verification'
-            })
-        else:
-            return jsonify({
-                'success': False,
-                'message': 'Backend health check failed'
-            })
-            
-    except requests.exceptions.ConnectionError:
+        results = {}
+        all_working = True
+        
+        for task_name, url in api_endpoints.items():
+            try:
+                response = requests.get(url, timeout=5)
+                if response.status_code == 200:
+                    data = response.json()
+                    results[task_name] = {
+                        'status': 'running',
+                        'model_loaded': data.get('model_loaded', False)
+                    }
+                else:
+                    results[task_name] = {'status': 'error', 'model_loaded': False}
+                    all_working = False
+            except:
+                results[task_name] = {'status': 'offline', 'model_loaded': False}
+                all_working = False
+        
         return jsonify({
-            'success': False,
-            'message': 'Cannot connect to AI backend. Please ensure FastAPI is running.'
+            'success': all_working,
+            'apis': results,
+            'message': 'All AI models ready' if all_working else 'Some APIs are not responding'
         })
+            
     except Exception as e:
         return jsonify({
             'success': False,
@@ -185,21 +217,34 @@ def test_models():
 def health():
     """Health check endpoint"""
     try:
-        # Check FastAPI backend
-        response = requests.get(f"{FASTAPI_URL}/health", timeout=5)
-        backend_health = response.json() if response.status_code == 200 else {}
+        # Check all three API backends
+        api_status = {}
+        api_endpoints = {
+            'plantation': 'http://localhost:8001/',
+            'waste_management': 'http://localhost:8002/',
+            'stray_animal_feeding': 'http://localhost:8003/'
+        }
+        
+        for task_name, url in api_endpoints.items():
+            try:
+                response = requests.get(url, timeout=3)
+                api_status[task_name] = 'running' if response.status_code == 200 else 'error'
+            except:
+                api_status[task_name] = 'offline'
+        
+        all_running = all(status == 'running' for status in api_status.values())
         
         return jsonify({
-            'status': 'healthy',
+            'status': 'healthy' if all_running else 'partial',
             'flask_status': 'running',
-            'backend_status': backend_health.get('status', 'unknown'),
-            'models_available': backend_health.get('models_loaded', False)
+            'api_services': api_status,
+            'models_available': all_running
         })
     except:
         return jsonify({
-            'status': 'partial',
+            'status': 'error',
             'flask_status': 'running',
-            'backend_status': 'offline',
+            'api_services': {'plantation': 'unknown', 'waste_management': 'unknown', 'stray_animal_feeding': 'unknown'},
             'models_available': False
         })
 

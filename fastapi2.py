@@ -449,6 +449,12 @@ async def startup_event():
         print(f"WARNING: animal_feeding_yolov11.pt not found at {animal_path}")
     
     try:
+        print("🔄 Starting verification system initialization...")
+        print(f"Model files check:")
+        print(f"  Plantation: {os.path.exists(plantation_path)}")
+        print(f"  Waste: {os.path.exists(waste_path)}")
+        print(f"  Animal: {os.path.exists(animal_path)}")
+        
         verifier = EcoConnectVerificationSystem(
             plantation_model_path=plantation_path,
             waste_model_path=waste_path,
@@ -456,7 +462,10 @@ async def startup_event():
         )
         print("✅ Verification system initialized successfully!")
     except Exception as e:
+        import traceback
         print(f"❌ Failed to initialize verification system: {e}")
+        print(f"Full error traceback:")
+        traceback.print_exc()
         print(f"Make sure the following model files exist:")
         print(f"  - {plantation_path}")
         print(f"  - {waste_path}")
@@ -671,6 +680,7 @@ async def login(
         )
 
 
+
 @app.post("/api/verify-task", response_model=VerificationResponse)
 async def verify_task(
     task_type: str = Form(...),
@@ -706,7 +716,7 @@ async def verify_task(
                 detail="Verification system not initialized. Please check if YOLO model files exist and restart the server."
             )
         
-        # Run anonymous verification (includes AI detection)
+        # Run anonymous verification (AI detection + activity verification, no face verification)
         verification_results = verifier.anonymous_verification(
             task_image_path=str(task_image_path),
             task_type=task_type
