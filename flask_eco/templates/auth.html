@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eco-Connect - Authentication</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-green: #2d8659;
+            --light-green: #4a7c59;
+            --mint-green: #7fb069;
+            --bg-white: #ffffff;
+            --text-dark: #2c3e50;
+            --text-light: #7f8c8d;
+            --subtle-bg: #f8fffe;
+            --border-light: #e8f5e8;
+            --success-green: #27ae60;
+            --error-red: #e74c3c;
+            --warning-orange: #f39c12;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(120deg, #e9f5ec, #cde7d6);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .auth-container {
+            max-width: 400px;
+            width: 100%;
+            margin: 2rem;
+            padding: 3rem 2rem;
+            background: var(--bg-white);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(45, 134, 89, 0.1);
+            border: 1px solid var(--border-light);
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-green);
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: var(--text-light);
+            margin-bottom: 3rem;
+        }
+
+        .auth-options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: block;
+        }
+
+        .btn-primary {
+            background: var(--primary-green);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--light-green);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--subtle-bg);
+            color: var(--text-dark);
+            border: 2px solid var(--border-light);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border-light);
+            transform: translateY(-2px);
+        }
+
+        .btn-guest {
+            background: var(--warning-orange);
+            color: white;
+        }
+
+        .btn-guest:hover {
+            background: #e67e22;
+            transform: translateY(-2px);
+        }
+
+        .divider {
+            margin: 2rem 0;
+            text-align: center;
+            color: var(--text-light);
+            position: relative;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: var(--border-light);
+        }
+
+        .divider span {
+            background: var(--bg-white);
+            padding: 0 1rem;
+        }
+
+        .back-link {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .back-link a {
+            color: var(--primary-green);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="logo">🌱</div>
+        <h1 class="title">Welcome to Eco-Connect</h1>
+        <p class="subtitle">Choose how you'd like to continue</p>
+        
+        <div class="auth-options">
+            <a href="{{ url_for('login') }}" class="btn btn-primary">
+                🔐 Login to Your Account
+            </a>
+            
+            <a href="{{ url_for('signup') }}" class="btn btn-secondary">
+                📝 Create New Account
+            </a>
+            
+            <div class="divider">
+                <span>or</span>
+            </div>
+            
+            <a href="{{ url_for('continue_as_guest') }}" class="btn btn-guest">
+                👤 Continue as Guest
+            </a>
+        </div>
+        
+        <div class="back-link">
+            <a href="{{ url_for('index') }}">← Back to Home</a>
+        </div>
+    </div>
+</body>
+</html>

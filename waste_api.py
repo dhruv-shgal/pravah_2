@@ -14,13 +14,13 @@ from pathlib import Path
 import shutil
 
 # Create upload directory
-UPLOAD_DIR = Path("uploads/plantation")
+UPLOAD_DIR = Path("uploads/waste")
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
-app = FastAPI(title="Plantation Verification API", version="1.0.0")
+app = FastAPI(title="Waste Collection Verification API", version="1.0.0")
 
 # Global variables
-plantation_model = None
+waste_model = None
 ai_detector = None
 
 class VerificationResponse(BaseModel):
@@ -168,22 +168,22 @@ def verify_exif_datetime(image_path):
             'message': f"EXIF verification failed: {str(e)}"
         }
 
-def verify_plantation_activity(image_path):
-    """Verify plantation activity in the image"""
+def verify_waste_activity(image_path):
+    """Verify waste collection activity in the image"""
     try:
-        if plantation_model is None:
+        if waste_model is None:
             return {
                 'is_valid': False,
                 'detected_classes': [],
-                'message': "Plantation model not loaded"
+                'message': "Waste collection model not loaded"
             }
         
         image = cv2.imread(str(image_path))
-        results = plantation_model(image)
+        results = waste_model(image)
         
         detected_classes = []
         person_detected = False
-        plantation_detected = False
+        waste_detected = False
         
         for result in results:
             boxes = result.boxes
@@ -196,27 +196,27 @@ def verify_plantation_activity(image_path):
                     detected_classes.append(class_name)
                     if class_name == 'person':
                         person_detected = True
-                    elif 'plant' in class_name.lower() or 'tree' in class_name.lower():
-                        plantation_detected = True
+                    elif any(waste_term in class_name.lower() for waste_term in ['waste', 'trash', 'garbage', 'litter', 'bottle', 'bag']):
+                        waste_detected = True
         
         if not person_detected:
             return {
                 'is_valid': False,
                 'detected_classes': detected_classes,
-                'message': "No person detected in plantation activity"
+                'message': "No person detected in waste collection activity"
             }
         
-        if not plantation_detected:
+        if not waste_detected:
             return {
                 'is_valid': False,
                 'detected_classes': detected_classes,
-                'message': "No plantation activity detected in image"
+                'message': "No waste collection activity detected in image"
             }
         
         return {
             'is_valid': True,
             'detected_classes': detected_classes,
-            'message': f"Plantation activity verified successfully"
+            'message': f"Waste collection activity verified successfully"
         }
         
     except Exception as e:
@@ -228,40 +228,40 @@ def verify_plantation_activity(image_path):
 
 @app.on_event("startup")
 async def startup_event():
-    """Initialize the plantation model on startup"""
-    global plantation_model, ai_detector
+    """Initialize the waste collection model on startup"""
+    global waste_model, ai_detector
     
     try:
-        print("🌱 Loading plantation YOLO model...")
-        plantation_model = YOLO('plantation_yolov11.pt')
-        print("✅ Plantation model loaded successfully!")
+        print("🗑️ Loading waste collection YOLO model...")
+        waste_model = YOLO('waste_collection_yolov11.pt')
+        print("✅ Waste collection model loaded successfully!")
         
         print("🤖 Loading AI detector...")
         ai_detector = pipeline("image-classification", model="umm-maybe/AI-image-detector")
         print("✅ AI detector loaded successfully!")
         
     except Exception as e:
-        print(f"❌ Failed to initialize plantation system: {e}")
-        plantation_model = None
+        print(f"❌ Failed to initialize waste collection system: {e}")
+        waste_model = None
         ai_detector = None
 
 @app.get("/")
 async def root():
     return {
-        "message": "Plantation Verification API",
-        "status": "running" if plantation_model is not None else "error",
-        "model_loaded": plantation_model is not None
+        "message": "Waste Collection Verification API",
+        "status": "running" if waste_model is not None else "error",
+        "model_loaded": waste_model is not None
     }
 
-@app.post("/verify-plantation", response_model=VerificationResponse)
-async def verify_plantation(task_image: UploadFile = File(...)):
-    """Verify plantation task submission"""
+@app.post("/verify-waste", response_model=VerificationResponse)
+async def verify_waste(task_image: UploadFile = File(...)):
+    """Verify waste collection task submission"""
     try:
-        if plantation_model is None:
-            raise HTTPException(status_code=503, detail="Plantation model not loaded")
+        if waste_model is None:
+            raise HTTPException(status_code=503, detail="Waste collection model not loaded")
         
         # Save uploaded image
-        image_path = UPLOAD_DIR / f"plantation_{uuid.uuid4()}.jpg"
+        image_path = UPLOAD_DIR / f"waste_{uuid.uuid4()}.jpg"
         with open(image_path, "wb") as buffer:
             shutil.copyfileobj(task_image.file, buffer)
         
@@ -286,8 +286,8 @@ async def verify_plantation(task_image: UploadFile = File(...)):
             results['message'] = exif_result['message']
             return VerificationResponse(**results)
         
-        # Step 3: Plantation Activity Verification
-        activity_result = verify_plantation_activity(image_path)
+        # Step 3: Waste Collection Activity Verification
+        activity_result = verify_waste_activity(image_path)
         results['steps']['activity_verification'] = activity_result
         
         if not activity_result['is_valid']:
@@ -298,7 +298,7 @@ async def verify_plantation(task_image: UploadFile = File(...)):
         # All checks passed
         os.remove(image_path)
         results['overall_valid'] = True
-        results['message'] = "Plantation task verified successfully!"
+        results['message'] = "Waste collection task verified successfully!"
         
         return VerificationResponse(**results)
         
@@ -309,4 +309,4 @@ async def verify_plantation(task_image: UploadFile = File(...)):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8001)
+    uvicorn.run(app, host="0.0.0.0", port=8002)

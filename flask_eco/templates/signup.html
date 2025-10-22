@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eco-Connect - Sign Up | AI Meets Conservation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-green: #2d8659;
+            --light-green: #4a7c59;
+            --mint-green: #7fb069;
+            --bg-white: #ffffff;
+            --text-dark: #2c3e50;
+            --text-light: #7f8c8d;
+            --subtle-bg: #f8fffe;
+            --border-light: #e8f5e8;
+            --success-green: #27ae60;
+            --error-red: #e74c3c;
+            --warning-orange: #f39c12;
+        }
+
+        [data-theme="dark"] {
+            --primary-green: #7fb069;
+            --light-green: #9bc53d;
+            --mint-green: #c7d2cc;
+            --bg-white: #0b1f16;
+            --text-dark: #e8f5e8;
+            --text-light: #a8b8a8;
+            --subtle-bg: #0e2c1d;
+            --border-light: #1a3d2e;
+            --success-green: #2ecc71;
+            --error-red: #e67e22;
+            --warning-orange: #f1c40f;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(120deg, #e9f5ec, #cde7d6);
+            color: var(--text-dark);
+            min-height: 100vh;
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] body {
+            background: linear-gradient(120deg, #0b1f16, #0e2c1d);
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: var(--bg-white);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(45, 134, 89, 0.1);
+            border: 1px solid var(--border-light);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-green);
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .flash-messages {
+            margin-bottom: 1rem;
+        }
+
+        .flash-message {
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .flash-success {
+            background: rgba(39, 174, 96, 0.1);
+            color: var(--success-green);
+            border: 1px solid var(--success-green);
+        }
+
+        .flash-error {
+            background: rgba(231, 76, 60, 0.1);
+            color: var(--error-red);
+            border: 1px solid var(--error-red);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border-light);
+            border-radius: 8px;
+            font-size: 1rem;
+            background: var(--bg-white);
+            color: var(--text-dark);
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 3px rgba(45, 134, 89, 0.1);
+        }
+
+        .camera-section {
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: var(--subtle-bg);
+            border-radius: 12px;
+            border: 2px dashed var(--border-light);
+            text-align: center;
+        }
+
+        .camera-controls {
+            margin-bottom: 1rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0.25rem;
+        }
+
+        .btn-primary {
+            background: var(--primary-green);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--light-green);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--subtle-bg);
+            color: var(--text-dark);
+            border: 2px solid var(--border-light);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border-light);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .video-container {
+            position: relative;
+            margin: 1rem 0;
+            border-radius: 12px;
+            overflow: hidden;
+            display: none;
+        }
+
+        #video {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+
+        .capture-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(45, 134, 89, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            display: none;
+        }
+
+        .status-message {
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            font-weight: 500;
+            text-align: center;
+            display: none;
+        }
+
+        .status-success {
+            background: rgba(39, 174, 96, 0.1);
+            color: var(--success-green);
+            border: 1px solid var(--success-green);
+        }
+
+        .status-error {
+            background: rgba(231, 76, 60, 0.1);
+            color: var(--error-red);
+            border: 1px solid var(--error-red);
+        }
+
+        .status-info {
+            background: rgba(243, 156, 18, 0.1);
+            color: var(--warning-orange);
+            border: 1px solid var(--warning-orange);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--border-light);
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 1rem 0;
+            display: none;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary-green);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .dark-mode-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--primary-green);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .dark-mode-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .auth-links {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .auth-links a {
+            color: var(--primary-green);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .auth-links a:hover {
+            text-decoration: underline;
+        }
+
+        .captured-images {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            margin: 1rem 0;
+            flex-wrap: wrap;
+        }
+
+        .captured-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 2px solid var(--success-green);
+        }
+
+        #canvas {
+            display: none;
+        }
+
+        .validation-message {
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+            min-height: 1.2rem;
+        }
+
+        .validation-success {
+            color: var(--success-green);
+        }
+
+        .validation-error {
+            color: var(--error-red);
+        }
+
+        .validation-checking {
+            color: var(--warning-orange);
+        }
+
+        .form-input.valid {
+            border-color: var(--success-green);
+        }
+
+        .form-input.invalid {
+            border-color: var(--error-red);
+        }
+
+        .form-input.checking {
+            border-color: var(--warning-orange);
+        }
+
+        .btn-guest {
+            background: var(--warning-orange);
+            color: white;
+        }
+
+        .btn-guest:hover {
+            background: #e67e22;
+            transform: translateY(-2px);
+        }
+
+        .option-divider {
+            margin: 1rem 0;
+            text-align: center;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            position: relative;
+        }
+
+        .option-divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: var(--border-light);
+            z-index: 1;
+        }
+
+        .option-divider span {
+            background: var(--bg-white);
+            padding: 0 1rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="dark-mode-toggle" onclick="toggleDarkMode()">🌙</button>
+
+    <div class="container">
+        <div class="header">
+            <div class="logo">🌱 Eco-Connect</div>
+            <div class="subtitle">AI Meets Conservation - Create Account</div>
+        </div>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash-message flash-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <form id="signupForm" method="POST" enctype="multipart/form-data" onsubmit="return validateForm()">
+            <div class="form-group">
+                <label class="form-label" for="email">Email</label>
+                <input type="email" id="email" name="email" class="form-input" required>
+                <div class="validation-message" id="emailValidation"></div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="password">Password</label>
+                <input type="password" id="password" name="password" class="form-input" required>
+                <div class="validation-message" id="passwordValidation"></div>
+                <small style="color: var(--text-light); font-size: 0.8rem;">
+                    Must be 8+ characters with uppercase, lowercase, number, and special character
+                </small>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="username">Username</label>
+                <input type="text" id="username" name="username" class="form-input" required>
+                <div class="validation-message" id="usernameValidation"></div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="userId">Unique User ID</label>
+                <input type="text" id="userId" name="userId" class="form-input" placeholder="Create a unique ID" required>
+                <div class="validation-message" id="userIdValidation"></div>
+                <small style="color: var(--text-light); font-size: 0.8rem;">This will be your permanent user ID</small>
+            </div>
+
+            <div class="camera-section">
+                <h3 style="margin-bottom: 1rem; color: var(--text-dark);">Face Registration</h3>
+                <p style="color: var(--text-light); margin-bottom: 1rem;">We'll capture 5 images using OpenCV for secure verification</p>
+                
+                <div class="camera-controls">
+                    <button type="button" class="btn btn-secondary" id="openCamera">📷 Start Camera</button>
+                    <button type="button" class="btn btn-primary" id="captureImage" disabled>📸 Capture Image</button>
+                    <button type="button" class="btn btn-secondary" id="stopCamera" disabled>🛑 Stop Camera</button>
+                </div>
+
+                <div class="camera-feed" id="cameraFeed" style="display: none;">
+                    <canvas id="cameraCanvas" width="640" height="480" style="border: 2px solid var(--border-light); border-radius: 12px; max-width: 100%;"></canvas>
+                </div>
+
+                <div class="progress-bar" id="progressBar" style="display: none;">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+
+                <div class="captured-images" id="capturedImages"></div>
+                
+                <div class="capture-status" id="captureStatus">
+                    <p>Images captured: <span id="imageCount">0</span>/5</p>
+                </div>
+                
+                <!-- Hidden inputs to store face images -->
+                <input type="hidden" id="faceImage0" name="face_image_0" value="">
+                <input type="hidden" id="faceImage1" name="face_image_1" value="">
+                <input type="hidden" id="faceImage2" name="face_image_2" value="">
+                <input type="hidden" id="faceImage3" name="face_image_3" value="">
+                <input type="hidden" id="faceImage4" name="face_image_4" value="">
+            </div>
+
+            <div class="status-message" id="statusMessage"></div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%;" id="submitBtn" disabled>
+                🚀 Create Account
+            </button>
+        </form>
+
+        <div class="option-divider">
+            <span>or</span>
+        </div>
+
+        <div class="login-options">
+            <a href="{{ url_for('continue_as_guest') }}" class="btn btn-guest" style="width: 100%;">
+                👤 Continue as Guest
+            </a>
+        </div>
+
+        <div class="auth-links">
+            Already have an account? <a href="{{ url_for('login') }}">Login here</a>
+            <br><br>
+            <a href="{{ url_for('index') }}">← Back to Home</a>
+        </div>
+    </div>
+
+    <script>
+        let cameraInterval = null;
+        let capturedCount = 0;
+        let isCapturing = false;
+
+        // Dark mode functionality
+        function toggleDarkMode() {
+            const body = document.body;
+            const isDark = body.getAttribute('data-theme') === 'dark';
+            body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            localStorage.setItem('theme', isDark ? 'light' : 'dark');
+            
+            const toggle = document.querySelector('.dark-mode-toggle');
+            toggle.textContent = isDark ? '🌙' : '☀️';
+        }
+
+        // Load saved theme
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.body.setAttribute('data-theme', savedTheme);
+            const toggle = document.querySelector('.dark-mode-toggle');
+            toggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+        }
+
+        // Show status message
+        function showStatus(message, type) {
+            const statusEl = document.getElementById('statusMessage');
+            statusEl.textContent = message;
+            statusEl.className = `status-message status-${type}`;
+            statusEl.style.display = 'block';
+        }
+
+        // Start camera using Flask/OpenCV backend
+        async function startCamera() {
+            try {
+                showStatus('Starting camera...', 'info');
+                
+                const response = await fetch('/start_camera');
+                const result = await response.json();
+                
+                if (result.success) {
+                    document.getElementById('cameraFeed').style.display = 'block';
+                    document.getElementById('openCamera').disabled = true;
+                    document.getElementById('captureImage').disabled = false;
+                    document.getElementById('stopCamera').disabled = false;
+                    
+                    // Start camera feed
+                    startCameraFeed();
+                    showStatus('Camera started! Position your face and click capture', 'success');
+                } else {
+                    showStatus(`Camera error: ${result.message}`, 'error');
+                }
+            } catch (error) {
+                showStatus('Failed to start camera', 'error');
+                console.error('Camera error:', error);
+            }
+        }
+
+        // Start camera feed display
+        function startCameraFeed() {
+            const canvas = document.getElementById('cameraCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            cameraInterval = setInterval(async () => {
+                try {
+                    const response = await fetch('/capture_frame');
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        const img = new Image();
+                        img.onload = function() {
+                            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        };
+                        img.src = 'data:image/jpeg;base64,' + result.frame;
+                    }
+                } catch (error) {
+                    console.error('Frame capture error:', error);
+                }
+            }, 100); // Update at ~10 FPS
+        }
+
+        // Capture single image
+        async function captureImage() {
+            if (isCapturing) return;
+            
+            try {
+                isCapturing = true;
+                showStatus(`Capturing image ${capturedCount + 1}/5...`, 'info');
+                
+                const canvas = document.getElementById('cameraCanvas');
+                const imageData = canvas.toDataURL('image/jpeg', 0.8);
+                
+                // Store image in hidden form field (more reliable than session)
+                document.getElementById(`faceImage${capturedCount}`).value = imageData;
+                
+                // Also save to session as backup
+                const response = await fetch('/save_face_image', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        image_data: imageData,
+                        image_index: capturedCount
+                    })
+                });
+                
+                const result = await response.json();
+                console.log('Session save result:', result);
+                
+                // Update count and UI regardless of session save result
+                capturedCount++;
+                updateImageCount();
+                
+                // Show thumbnail
+                const img = document.createElement('img');
+                img.src = imageData;
+                img.className = 'captured-image';
+                img.style.width = '60px';
+                img.style.height = '60px';
+                img.style.borderRadius = '8px';
+                img.style.objectFit = 'cover';
+                img.style.border = '2px solid var(--success-green)';
+                img.style.margin = '0.25rem';
+                document.getElementById('capturedImages').appendChild(img);
+                
+                if (capturedCount >= 5) {
+                    finishCapture();
+                } else {
+                    showStatus(`Image ${capturedCount}/5 captured! Capture ${5 - capturedCount} more.`, 'success');
+                }
+                
+            } catch (error) {
+                showStatus('Failed to capture image', 'error');
+                console.error('Capture error:', error);
+            } finally {
+                isCapturing = false;
+            }
+        }
+
+        // Update image count display
+        function updateImageCount() {
+            document.getElementById('imageCount').textContent = capturedCount;
+            
+            const progress = (capturedCount / 5) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            
+            if (capturedCount > 0) {
+                document.getElementById('progressBar').style.display = 'block';
+            }
+        }
+
+        // Finish capture process
+        function finishCapture() {
+            showStatus('✅ All 5 images captured! You can now create your account.', 'success');
+            document.getElementById('submitBtn').disabled = false;
+            document.getElementById('captureImage').disabled = true;
+            
+            // Stop camera feed
+            if (cameraInterval) {
+                clearInterval(cameraInterval);
+                cameraInterval = null;
+            }
+        }
+
+        // Stop camera
+        async function stopCamera() {
+            try {
+                if (cameraInterval) {
+                    clearInterval(cameraInterval);
+                    cameraInterval = null;
+                }
+                
+                const response = await fetch('/stop_camera');
+                const result = await response.json();
+                
+                document.getElementById('cameraFeed').style.display = 'none';
+                document.getElementById('openCamera').disabled = false;
+                document.getElementById('captureImage').disabled = true;
+                document.getElementById('stopCamera').disabled = true;
+                
+                showStatus('Camera stopped', 'info');
+            } catch (error) {
+                console.error('Stop camera error:', error);
+            }
+        }
+
+        // Check existing images on page load
+        function checkExistingImages() {
+            // Check form fields for existing images
+            let existingCount = 0;
+            for (let i = 0; i < 5; i++) {
+                const imageField = document.getElementById(`faceImage${i}`);
+                if (imageField && imageField.value && imageField.value.length > 0) {
+                    existingCount++;
+                }
+            }
+            
+            capturedCount = existingCount;
+            updateImageCount();
+            
+            console.log('DEBUG: Found', existingCount, 'existing images in form fields');
+            
+            if (capturedCount >= 5) {
+                document.getElementById('submitBtn').disabled = false;
+                showStatus('✅ Face images already captured! You can create your account.', 'success');
+            } else if (capturedCount > 0) {
+                showStatus(`Found ${capturedCount} existing images. Capture ${5 - capturedCount} more.`, 'info');
+            }
+            
+            // Also check session as backup
+            fetch('/get_face_images_count')
+                .then(response => response.json())
+                .then(result => {
+                    console.log('DEBUG: Session images check:', result);
+                })
+                .catch(error => {
+                    console.error('Session check error:', error);
+                });
+        }
+
+        // Validate form before submission
+        function validateForm() {
+            console.log('DEBUG: Form validation started');
+            
+            // Check hidden form fields for face images
+            let imageCount = 0;
+            for (let i = 0; i < 5; i++) {
+                const imageField = document.getElementById(`faceImage${i}`);
+                if (imageField && imageField.value && imageField.value.length > 0) {
+                    imageCount++;
+                }
+            }
+            
+            console.log(`DEBUG: Found ${imageCount}/5 images in form fields`);
+            
+            if (imageCount < 5) {
+                alert(`Please capture all 5 face images. Currently have ${imageCount} images.`);
+                return false;
+            }
+            
+            console.log('DEBUG: Form validation passed');
+            return true;
+        }
+
+        // Event listeners
+        document.getElementById('openCamera').addEventListener('click', startCamera);
+        document.getElementById('captureImage').addEventListener('click', captureImage);
+        document.getElementById('stopCamera').addEventListener('click', stopCamera);
+
+        // Initialize
+        loadTheme();
+        checkExistingImages();
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            if (cameraInterval) {
+                clearInterval(cameraInterval);
+            }
+            fetch('/stop_camera').catch(() => {});
+        });
+    </script>
+</body>
+</html>

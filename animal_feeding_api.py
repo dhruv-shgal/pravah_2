@@ -233,7 +233,7 @@ async def startup_event():
     
     try:
         print("🐕 Loading animal feeding YOLO model...")
-        animal_model = YOLO(r'C:\Users\dhruv\OneDrive\Desktop\pravah\eco_connect\animal_feeding_yolov11.pt')
+        animal_model = YOLO('animal_feeding_yolov11.pt')
         print("✅ Animal feeding model loaded successfully!")
         
         print("🤖 Loading AI detector...")

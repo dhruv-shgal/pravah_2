@@ -116,41 +116,33 @@
         }
 
         /* Theme Toggle */
-        .theme-toggle {
+        .theme-toggle-btn {
             background: var(--subtle-bg);
             border: 2px solid var(--border-light);
-            border-radius: 25px;
-            padding: 0.3rem;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
             cursor: pointer;
             transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-dark);
         }
 
-        .toggle-switch {
-            position: relative;
-            width: 40px;
-            height: 20px;
-            background: var(--text-light);
-            border-radius: 20px;
-            transition: background 0.3s ease;
-        }
-
-        .toggle-switch.active {
+        .theme-toggle-btn:hover {
             background: var(--primary-green);
+            color: white;
+            transform: scale(1.1);
         }
 
-        .toggle-slider {
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            width: 16px;
-            height: 16px;
-            background: white;
-            border-radius: 50%;
-            transition: transform 0.3s ease;
+        [data-theme="dark"] .theme-toggle-btn {
+            background: var(--primary-green);
+            color: white;
         }
 
-        .toggle-switch.active .toggle-slider {
-            transform: translateX(20px);
+        [data-theme="dark"] .theme-toggle-btn:hover {
+            background: var(--light-green);
         }
 
         /* Hero Section */
@@ -1306,22 +1298,31 @@
     <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
-            <a href="index.html" class="logo">
+            <a href="{{ url_for('index') }}" class="logo">
                 <span>🌿</span>
-                <span>PRAVAH</span>
+                <span>Eco-Connect</span>
             </a>
             <ul class="nav-links">
-                <li><a href="/">Home</a></li>
-                <li><a href="/dashboard">Dashboard</a></li>
-                <li><a href="/eco-connect">Eco-Connect</a></li>
-                <li><a href="/#about">About</a></li>
-                <li><a href="#" id="logoutBtn" class="cta-nav">Logout</a></li>
+                <li><a href="{{ url_for('index') }}">Home</a></li>
+                {% if logged_in %}
+                    {% if not session.get('guest_mode') %}
+                        <li><a href="{{ url_for('profile') }}">Profile</a></li>
+                        <li><span style="color: var(--primary-green); font-weight: 600;">{{ username }} ({{ eco_coins }} coins)</span></li>
+                        <li><a href="{{ url_for('logout') }}" class="cta-nav">Logout</a></li>
+                    {% else %}
+                        <li><span style="color: var(--warning-orange); font-weight: 600;">Guest Mode</span></li>
+                        <li><a href="{{ url_for('signup') }}" class="cta-nav">Sign Up</a></li>
+                        <li><a href="{{ url_for('login') }}">Login</a></li>
+                    {% endif %}
+                {% else %}
+                    <li><a href="#about">About</a></li>
+                    <li><a href="{{ url_for('login') }}">Login</a></li>
+                    <li><a href="{{ url_for('signup') }}" class="cta-nav">Sign Up</a></li>
+                {% endif %}
                 <li>
-                    <div class="theme-toggle" id="themeToggle">
-                        <div class="toggle-switch" id="toggleSwitch">
-                            <div class="toggle-slider"></div>
-                        </div>
-                    </div>
+                    <button class="theme-toggle-btn" id="themeToggle" onclick="toggleTheme()">
+                        <i class="fas fa-moon" id="themeIcon"></i>
+                    </button>
                 </li>
             </ul>
         </div>
@@ -1423,7 +1424,7 @@
                             <label for="activityType">Activity Type</label>
                             <select id="activityType" class="form-select" required>
                                 <option value="">Select activity type</option>
-                                <option value="plantation">🌳 Tree Plantation (+30 points)</option>
+                                <option value="tree_planting">🌳 Tree Planting (+30 points)</option>
                                 <option value="waste_management">🗑️ Waste Collection (+20 points)</option>
                                 <option value="stray_animal_feeding">🐾 Animal Feeding (+15 points)</option>
                             </select>
@@ -1472,7 +1473,7 @@
                         <div class="points-list">
                             <div class="point-item">
                                 <span class="point-icon">🌳</span>
-                                <span class="point-activity">Tree Plantation</span>
+                                <span class="point-activity">Tree Planting</span>
                                 <span class="point-value">+30 pts</span>
                             </div>
                             <div class="point-item">
@@ -1500,20 +1501,20 @@
             <div class="model-grid">
                 <div class="model-card scroll-animate">
                     <div class="model-header">
-                        <h3>🌳 Tree Plantation Model</h3>
-                        <div class="model-status" id="plantationStatus">
+                        <h3>🌳 Tree Planting Model</h3>
+                        <div class="model-status" id="treePlantingStatus">
                             <span class="status-indicator"></span>
                             <span class="status-text">Checking...</span>
                         </div>
                     </div>
                     <div class="model-info">
                         <p>Detects tree planting activities and verifies conservation efforts</p>
-                        <div class="model-stats" id="plantationStats">
+                        <div class="model-stats" id="treePlantingStats">
                             <span>Classes: Loading...</span>
                             <span>Accuracy: 95.2%</span>
                         </div>
                     </div>
-                    <button class="test-model-btn" onclick="testSpecificModel('plantation')">
+                    <button class="test-model-btn" onclick="testSpecificModel('tree_planting')">
                         🧪 Test Model
                     </button>
                 </div>
@@ -1630,7 +1631,7 @@
                         <div class="stat-label-large">Activities Completed</div>
                         <div class="activity-breakdown">
                             <div class="breakdown-item">
-                                <span>🌳 Plantations: <span id="plantationCount">0</span></span>
+                                <span>🌳 Tree Planting: <span id="treePlantingCount">0</span></span>
                             </div>
                             <div class="breakdown-item">
                                 <span>🗑️ Cleanups: <span id="wasteCount">0</span></span>
@@ -1874,25 +1875,40 @@
 
     <script>
         // Theme Management
-        const themeToggle = document.getElementById('themeToggle');
-        const toggleSwitch = document.getElementById('toggleSwitch');
-        const html = document.documentElement;
-
-        // Load saved theme
-        const savedTheme = localStorage.getItem('theme') || 'light';
-        html.setAttribute('data-theme', savedTheme);
-        if (savedTheme === 'dark') {
-            toggleSwitch.classList.add('active');
-        }
-
-        themeToggle.addEventListener('click', () => {
+        function toggleTheme() {
+            const html = document.documentElement;
+            const themeIcon = document.getElementById('themeIcon');
             const currentTheme = html.getAttribute('data-theme');
             const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
             
             html.setAttribute('data-theme', newTheme);
             localStorage.setItem('theme', newTheme);
-            toggleSwitch.classList.toggle('active');
-        });
+            
+            // Update icon
+            if (newTheme === 'dark') {
+                themeIcon.className = 'fas fa-sun';
+            } else {
+                themeIcon.className = 'fas fa-moon';
+            }
+        }
+
+        // Load saved theme on page load
+        function loadTheme() {
+            const html = document.documentElement;
+            const themeIcon = document.getElementById('themeIcon');
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            
+            html.setAttribute('data-theme', savedTheme);
+            
+            if (savedTheme === 'dark') {
+                themeIcon.className = 'fas fa-sun';
+            } else {
+                themeIcon.className = 'fas fa-moon';
+            }
+        }
+
+        // Initialize theme on page load
+        document.addEventListener('DOMContentLoaded', loadTheme);
 
         // Eco-Connect Data Management
         class EcoConnectManager {
@@ -1914,12 +1930,12 @@
             async init() {
                 // Initialize without authentication for eco-connect
                 this.currentUser = {
-                    username: 'Eco Warrior',
+                    username: 'Eco-Connect User',
                     email: 'eco@example.com',
                     user_id: 'anonymous_user',
                     totalPoints: 0,
                     totalActivities: 0,
-                    plantationCount: 0,
+                    treePlantingCount: 0,
                     wasteCount: 0,
                     animalCount: 0
                 };
@@ -1940,19 +1956,19 @@
                 // Update navigation to show username
                 const logoText = document.querySelector('.logo span:last-child');
                 if (logoText && this.currentUser) {
-                    logoText.textContent = `PRAVAH • ${this.currentUser.username}`;
+                    logoText.textContent = `Eco-Connect • ${this.currentUser.username}`;
                 }
             }
 
             loadUserStats() {
                 // First check if user data exists in localStorage (from profile.html)
-                const userData = localStorage.getItem('pravah_user');
+                const userData = localStorage.getItem('eco_connect_user');
                 if (userData) {
                     const user = JSON.parse(userData);
                     return {
                         totalPoints: user.ecoCoins || 0,
                         totalActivities: user.uploads ? user.uploads.length : 0,
-                        plantationCount: user.uploads ? user.uploads.filter(u => u.type === 'plantation').length : 0,
+                        treePlantingCount: user.uploads ? user.uploads.filter(u => u.type === 'tree_planting').length : 0,
                         wasteCount: user.uploads ? user.uploads.filter(u => u.type === 'waste_collection').length : 0,
                         animalCount: user.uploads ? user.uploads.filter(u => u.type === 'animal_feeding').length : 0
                     };
@@ -1962,7 +1978,7 @@
                 const defaultStats = {
                     totalPoints: 0,
                     totalActivities: 0,
-                    plantationCount: 0,
+                    treePlantingCount: 0,
                     wasteCount: 0,
                     animalCount: 0
                 };
@@ -1974,11 +1990,11 @@
                 localStorage.setItem('ecoUserStats', JSON.stringify(this.userStats));
                 
                 // Update main user data if it exists
-                const userData = localStorage.getItem('pravah_user');
+                const userData = localStorage.getItem('eco_connect_user');
                 if (userData) {
                     const user = JSON.parse(userData);
                     user.ecoCoins = this.userStats.totalPoints;
-                    localStorage.setItem('pravah_user', JSON.stringify(user));
+                    localStorage.setItem('eco_connect_user', JSON.stringify(user));
                 }
             }
 
@@ -2096,8 +2112,8 @@
                         this.userStats.totalActivities += 1;
                         
                         switch(activityType) {
-                            case 'plantation':
-                                this.userStats.plantationCount += 1;
+                            case 'tree_planting':
+                                this.userStats.treePlantingCount += 1;
                                 break;
                             case 'waste_collection':
                                 this.userStats.wasteCount += 1;
@@ -2172,7 +2188,7 @@
 
             getPointsForActivity(activityType) {
                 const pointsMap = {
-                    'plantation': 30,
+                    'tree_planting': 30,
                     'waste_management': 20,
                     'stray_animal_feeding': 15
                 };
@@ -2181,7 +2197,7 @@
 
             getActivityIcon(activityType) {
                 const iconMap = {
-                    'plantation': '🌳',
+                    'tree_planting': '🌳',
                     'waste_management': '🗑️',
                     'stray_animal_feeding': '🐾'
                 };
@@ -2190,7 +2206,7 @@
 
             getActivityName(activityType) {
                 const nameMap = {
-                    'plantation': 'Tree Plantation',
+                    'tree_planting': 'Tree Planting',
                     'waste_management': 'Waste Management',
                     'stray_animal_feeding': 'Stray Animal Feeding'
                 };
@@ -2209,7 +2225,7 @@
             updateUserStats() {
                 document.getElementById('totalPoints').textContent = this.userStats.totalPoints.toLocaleString();
                 document.getElementById('totalActivities').textContent = this.userStats.totalActivities;
-                document.getElementById('plantationCount').textContent = this.userStats.plantationCount;
+                document.getElementById('treePlantingCount').textContent = this.userStats.treePlantingCount;
                 document.getElementById('wasteCount').textContent = this.userStats.wasteCount;
                 document.getElementById('animalCount').textContent = this.userStats.animalCount;
 
@@ -2326,7 +2342,7 @@
                 const result = await response.json();
                 
                 if (result.success) {
-                    updateModelStatus('plantation', result.models.plantation);
+                    updateModelStatus('tree_planting', result.models.tree_planting);
                     updateModelStatus('waste_management', result.models.waste_management);
                     updateModelStatus('stray_animal_feeding', result.models.stray_animal_feeding);
                     
@@ -2361,13 +2377,13 @@
 
         function updateModelStatus(modelType, modelData) {
             const statusMap = {
-                'plantation': 'plantationStatus',
+                'tree_planting': 'treePlantingStatus',
                 'waste_management': 'wasteStatus', 
                 'stray_animal_feeding': 'animalStatus'
             };
             
             const statsMap = {
-                'plantation': 'plantationStats',
+                'tree_planting': 'treePlantingStats',
                 'waste_management': 'wasteStats',
                 'stray_animal_feeding': 'animalStats'
             };
@@ -2392,7 +2408,7 @@
         }
 
         function setAllModelsOffline() {
-            ['plantationStatus', 'wasteStatus', 'animalStatus', 'faceStatus'].forEach(id => {
+            ['treePlantingStatus', 'wasteStatus', 'animalStatus', 'faceStatus'].forEach(id => {
                 const element = document.getElementById(id);
                 element.querySelector('.status-indicator').className = 'status-indicator offline';
                 element.querySelector('.status-text').textContent = 'Offline';
@@ -2429,7 +2445,7 @@
                     formData.append('description', 'Model test image');
                     
                     const endpoints = {
-                        'plantation': '/api/verify-plantation',
+                        'tree_planting': '/api/verify-plantation',
                         'waste_management': '/api/verify-waste-collection',
                         'stray_animal_feeding': '/api/verify-animal-feeding'
                     };

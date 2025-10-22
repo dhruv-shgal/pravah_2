@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eco-Connect - Profile | AI Meets Conservation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-green: #2d8659;
+            --light-green: #4a7c59;
+            --mint-green: #7fb069;
+            --bg-white: #ffffff;
+            --text-dark: #2c3e50;
+            --text-light: #7f8c8d;
+            --subtle-bg: #f8fffe;
+            --border-light: #e8f5e8;
+            --success-green: #27ae60;
+            --error-red: #e74c3c;
+            --warning-orange: #f39c12;
+        }
+
+        [data-theme="dark"] {
+            --primary-green: #7fb069;
+            --light-green: #9bc53d;
+            --mint-green: #c7d2cc;
+            --bg-white: #0b1f16;
+            --text-dark: #e8f5e8;
+            --text-light: #a8b8a8;
+            --subtle-bg: #0e2c1d;
+            --border-light: #1a3d2e;
+            --success-green: #2ecc71;
+            --error-red: #e67e22;
+            --warning-orange: #f1c40f;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(120deg, #e9f5ec, #cde7d6);
+            color: var(--text-dark);
+            min-height: 100vh;
+        }
+
+        [data-theme="dark"] body {
+            background: linear-gradient(120deg, #0b1f16, #0e2c1d);
+        }
+
+        .navbar {
+            background: var(--bg-white);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-green);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-dark);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-green);
+        }
+
+        .dark-mode-toggle {
+            background: var(--primary-green);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .flash-messages {
+            margin-bottom: 1rem;
+        }
+
+        .flash-message {
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .flash-success {
+            background: rgba(39, 174, 96, 0.1);
+            color: var(--success-green);
+            border: 1px solid var(--success-green);
+        }
+
+        .flash-error {
+            background: rgba(231, 76, 60, 0.1);
+            color: var(--error-red);
+            border: 1px solid var(--error-red);
+        }
+
+        .profile-header {
+            background: var(--bg-white);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: var(--primary-green);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            margin: 0 auto 1rem;
+        }
+
+        .profile-name {
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-email {
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .stat-card {
+            background: var(--bg-white);
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-green);
+        }
+
+        .stat-label {
+            color: var(--text-light);
+            margin-top: 0.5rem;
+        }
+
+        .upload-section {
+            background: var(--bg-white);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--text-dark);
+        }
+
+        .upload-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .upload-card {
+            background: var(--subtle-bg);
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            border: 2px solid var(--border-light);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .upload-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-green);
+        }
+
+        .upload-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .upload-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .upload-points {
+            color: var(--primary-green);
+            font-weight: 600;
+        }
+
+        .upload-form {
+            display: none;
+            margin-top: 1rem;
+            padding: 1.5rem;
+            background: var(--bg-white);
+            border-radius: 12px;
+            border: 2px solid var(--border-light);
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .form-input, .form-textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--border-light);
+            border-radius: 8px;
+            background: var(--bg-white);
+            color: var(--text-dark);
+            transition: border-color 0.3s ease;
+        }
+
+        .form-input:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary-green);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: var(--primary-green);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--light-green);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--subtle-bg);
+            color: var(--text-dark);
+            border: 2px solid var(--border-light);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .recent-activities {
+            background: var(--bg-white);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--subtle-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .activity-time {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        .activity-points {
+            font-weight: 600;
+            color: var(--primary-green);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-light);
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .status-message {
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            font-weight: 500;
+            text-align: center;
+            display: none;
+        }
+
+        .status-success {
+            background: rgba(39, 174, 96, 0.1);
+            color: var(--success-green);
+            border: 1px solid var(--success-green);
+        }
+
+        .status-error {
+            background: rgba(231, 76, 60, 0.1);
+            color: var(--error-red);
+            border: 1px solid var(--error-red);
+        }
+
+        .status-info {
+            background: rgba(243, 156, 18, 0.1);
+            color: var(--warning-orange);
+            border: 1px solid var(--warning-orange);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+            
+            .profile-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .upload-buttons {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-links {
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">🌱 Eco-Connect</div>
+        <div class="nav-links">
+            <a href="{{ url_for('index') }}">Home</a>
+            <a href="{{ url_for('logout') }}">Logout</a>
+            <button class="dark-mode-toggle" onclick="toggleDarkMode()">🌙</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash-message flash-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <div class="profile-header">
+            <div class="profile-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="profile-name">{{ username }}</div>
+            <div class="profile-email">{{ email or 'Email not provided' }}</div>
+        </div>
+
+        <div class="profile-stats">
+            <div class="stat-card">
+                <div class="stat-number" id="totalCoins">{{ eco_coins }}</div>
+                <div class="stat-label">Eco-Points Earned</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalActivities">{{ uploads|length }}</div>
+                <div class="stat-label">Activities Completed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="currentRank">
+                    {% if eco_coins >= 500 %}Expert
+                    {% elif eco_coins >= 200 %}Advanced
+                    {% elif eco_coins >= 50 %}Intermediate
+                    {% else %}Beginner
+                    {% endif %}
+                </div>
+                <div class="stat-label">Current Rank</div>
+            </div>
+        </div>
+
+        <div class="upload-section">
+            <h2 class="section-title">Upload Conservation Activities</h2>
+            
+            <div class="upload-buttons">
+                <div class="upload-card" onclick="toggleUploadForm('tree_planting')">
+                    <div class="upload-icon">🌳</div>
+                    <div class="upload-title">Tree Planting</div>
+                    <div class="upload-points">+30 Eco-Points</div>
+                </div>
+                
+                <div class="upload-card" onclick="toggleUploadForm('waste_management')">
+                    <div class="upload-icon">🗑️</div>
+                    <div class="upload-title">Waste Collection</div>
+                    <div class="upload-points">+20 Eco-Points</div>
+                </div>
+                
+                <div class="upload-card" onclick="toggleUploadForm('stray_animal_feeding')">
+                    <div class="upload-icon">🐾</div>
+                    <div class="upload-title">Animal Feeding</div>
+                    <div class="upload-points">+15 Eco-Points</div>
+                </div>
+            </div>
+
+            <!-- Upload Forms -->
+            <div id="tree_planting-form" class="upload-form">
+                <h3>🌳 Upload Tree Planting Activity</h3>
+                <form onsubmit="uploadTask(event, 'tree_planting')">
+                    <div class="form-group">
+                        <label class="form-label">Activity Image</label>
+                        <input type="file" name="task_image" accept="image/*" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Description (Optional)</label>
+                        <textarea name="description" class="form-textarea" rows="3" placeholder="Tell us about your tree planting activity..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">🚀 Verify & Upload</button>
+                    <button type="button" class="btn btn-secondary" onclick="toggleUploadForm('tree_planting')">Cancel</button>
+                </form>
+            </div>
+
+            <div id="waste_management-form" class="upload-form">
+                <h3>🗑️ Upload Waste Collection Activity</h3>
+                <form onsubmit="uploadTask(event, 'waste_management')">
+                    <div class="form-group">
+                        <label class="form-label">Activity Image</label>
+                        <input type="file" name="task_image" accept="image/*" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Description (Optional)</label>
+                        <textarea name="description" class="form-textarea" rows="3" placeholder="Tell us about your waste collection activity..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">🚀 Verify & Upload</button>
+                    <button type="button" class="btn btn-secondary" onclick="toggleUploadForm('waste_management')">Cancel</button>
+                </form>
+            </div>
+
+            <div id="stray_animal_feeding-form" class="upload-form">
+                <h3>🐾 Upload Animal Feeding Activity</h3>
+                <form onsubmit="uploadTask(event, 'stray_animal_feeding')">
+                    <div class="form-group">
+                        <label class="form-label">Activity Image</label>
+                        <input type="file" name="task_image" accept="image/*" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Description (Optional)</label>
+                        <textarea name="description" class="form-textarea" rows="3" placeholder="Tell us about your animal feeding activity..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">🚀 Verify & Upload</button>
+                    <button type="button" class="btn btn-secondary" onclick="toggleUploadForm('stray_animal_feeding')">Cancel</button>
+                </form>
+            </div>
+
+            <div class="status-message" id="statusMessage"></div>
+        </div>
+
+        <div class="recent-activities">
+            <h2 class="section-title">Recent Activities</h2>
+            <div id="activitiesList">
+                {% if uploads %}
+                    {% for upload in uploads[-5:] %}
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            {% if upload.task_type == 'tree_planting' %}🌳
+                            {% elif upload.task_type == 'waste_management' %}🗑️
+                            {% elif upload.task_type == 'stray_animal_feeding' %}🐾
+                            {% else %}📸
+                            {% endif %}
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">{{ upload.description or 'Conservation Activity' }}</div>
+                            <div class="activity-time">{{ upload.timestamp[:10] if upload.timestamp else 'Recently' }}</div>
+                        </div>
+                        <div class="activity-points">+{{ upload.points }} pts</div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        <div class="empty-icon">🌱</div>
+                        <h3>No activities yet</h3>
+                        <p>Start your eco-journey by uploading your first activity!</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dark mode functionality
+        function toggleDarkMode() {
+            const body = document.body;
+            const isDark = body.getAttribute('data-theme') === 'dark';
+            body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            localStorage.setItem('theme', isDark ? 'light' : 'dark');
+            
+            const toggle = document.querySelector('.dark-mode-toggle');
+            toggle.textContent = isDark ? '🌙' : '☀️';
+        }
+
+        // Load saved theme
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.body.setAttribute('data-theme', savedTheme);
+            const toggle = document.querySelector('.dark-mode-toggle');
+            toggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+        }
+
+        // Toggle upload form
+        function toggleUploadForm(taskType) {
+            // Hide all forms
+            const forms = document.querySelectorAll('.upload-form');
+            forms.forEach(form => {
+                if (form.id === `${taskType}-form`) {
+                    form.style.display = form.style.display === 'block' ? 'none' : 'block';
+                } else {
+                    form.style.display = 'none';
+                }
+            });
+        }
+
+        // Show status message
+        function showStatus(message, type) {
+            const statusEl = document.getElementById('statusMessage');
+            statusEl.textContent = message;
+            statusEl.className = `status-message status-${type}`;
+            statusEl.style.display = 'block';
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                statusEl.style.display = 'none';
+            }, 5000);
+        }
+
+        // Upload task
+        async function uploadTask(event, taskType) {
+            event.preventDefault();
+            
+            const form = event.target;
+            const formData = new FormData(form);
+            formData.append('task_type', taskType);
+            
+            // Disable submit button
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.textContent = '🔄 Verifying...';
+            
+            try {
+                showStatus('Uploading and verifying your activity...', 'info');
+                
+                const response = await fetch('/api/verify-task', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showStatus(`✅ ${result.message}`, 'success');
+                    
+                    // Update stats if user is logged in
+                    if (result.logged_in) {
+                        document.getElementById('totalCoins').textContent = result.total_coins;
+                        const currentActivities = parseInt(document.getElementById('totalActivities').textContent);
+                        document.getElementById('totalActivities').textContent = currentActivities + 1;
+                        
+                        // Update rank
+                        const coins = result.total_coins;
+                        let rank = 'Beginner';
+                        if (coins >= 500) rank = 'Expert';
+                        else if (coins >= 200) rank = 'Advanced';
+                        else if (coins >= 50) rank = 'Intermediate';
+                        document.getElementById('currentRank').textContent = rank;
+                        
+                        // Refresh page after 2 seconds to show new activity
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 2000);
+                    }
+                    
+                    // Reset form and hide it
+                    form.reset();
+                    toggleUploadForm(taskType);
+                    
+                } else {
+                    showStatus(`❌ ${result.message}`, 'error');
+                }
+                
+            } catch (error) {
+                showStatus('❌ Network error. Please try again.', 'error');
+                console.error('Upload error:', error);
+            } finally {
+                // Re-enable submit button
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }
+        }
+
+        // Initialize
+        loadTheme();
+    </script>
+</body>
+</html>
